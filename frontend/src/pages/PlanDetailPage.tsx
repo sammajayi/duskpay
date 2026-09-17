@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useWallet } from '../lib/duskpay/WalletContext';
 import { connectToDuskPay, getStoredContractAddress, hexToPlanId, readCurrentLedger } from '../lib/duskpay/client';
 import type { PlanRecord } from '../lib/duskpay/client';
+import { starToNight } from '../lib/duskpay/night';
 
 export default function PlanDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -68,8 +69,8 @@ export default function PlanDetailPage() {
         <dl className="space-y-2 text-sm">
           <Row label="Borrower" value={hex(plan.borrower.bytes)} />
           <Row label="Merchant" value={hex(plan.merchant.bytes)} />
-          <Row label="Total amount" value={plan.totalAmount.toString()} />
-          <Row label="Installment amount" value={plan.installmentAmount.toString()} />
+          <Row label="Total amount" value={`${starToNight(plan.totalAmount)} NIGHT`} />
+          <Row label="Installment amount" value={`${starToNight(plan.installmentAmount)} NIGHT`} />
           <Row label="Installments paid" value={`${plan.paidCount} / ${plan.installmentCount}`} />
           <Row label="Eligibility check" value={plan.eligibilityResult ? 'Passed' : 'Failed'} />
         </dl>

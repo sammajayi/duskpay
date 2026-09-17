@@ -25,14 +25,16 @@ export default defineConfig({
     wasm(),
     react(),
     tailwindcss(),
-    // `process` is needed — @subsquid/scale-codec and friends (pulled in
-    // transitively by the indexer provider) reference it at module scope.
-    // `global` must stay off: its shim gets injected even into the
-    // wasm-bindgen loader living in ../contract's separate node_modules
-    // tree (a sibling directory, not an ancestor), where the shim package
-    // can never resolve via normal Node module resolution — fs.allow only
-    // controls what Vite will *serve*, not where bare imports resolve from.
-    nodePolyfills({ globals: { global: false, buffer: true, process: true } }),
+    // Only `process` is needed — @subsquid/scale-codec and friends (pulled
+    // in transitively by the indexer provider) reference it at module scope.
+    // `global` and `Buffer` must stay off: their shims get injected even
+    // into files living in ../contract's separate node_modules tree (a
+    // sibling directory, not an ancestor), where the shim package can never
+    // resolve via normal Node module resolution — fs.allow only controls
+    // what Vite will *serve*, not where bare imports resolve from. This
+    // only breaks the production build (Rollup resolves strictly); the dev
+    // server's esbuild-based optimizer tolerates it.
+    nodePolyfills({ globals: { global: false, Buffer: false, process: true } }),
   ],
   optimizeDeps: {
     // Only the wasm-bindgen packages themselves need to bypass esbuild's

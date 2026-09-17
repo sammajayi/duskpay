@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '../lib/duskpay/WalletContext';
 import { connectToDuskPay, deployDuskPay, getStoredContractAddress, planIdToHex } from '../lib/duskpay/client';
+import { nightToStar } from '../lib/duskpay/night';
 
 const randomPlanId = (): Uint8Array => crypto.getRandomValues(new Uint8Array(32));
 
@@ -36,7 +37,7 @@ export default function RequestPlanPage() {
     setErrorMsg(null);
 
     try {
-      const total = BigInt(totalAmount);
+      const total = nightToStar(totalAmount);
       const count = BigInt(installmentCount);
       const installmentAmount = total / count;
       const merchantBytes = hexToBytes32(merchantAddress);
@@ -101,13 +102,15 @@ export default function RequestPlanPage() {
           />
         </Field>
 
-        <Field label="Total amount">
+        <Field label="Total amount (NIGHT)">
           <input
             required
             type="number"
-            min={1}
+            min={0}
+            step="any"
             value={totalAmount}
             onChange={(e) => setTotalAmount(e.target.value)}
+            placeholder="e.g. 12.5"
             className="input"
           />
         </Field>

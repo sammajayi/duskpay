@@ -9,6 +9,7 @@ import {
   readCurrentLedger,
   type PlanListEntry,
 } from '../lib/duskpay/client';
+import { starToNight } from '../lib/duskpay/night';
 
 export default function MyPlansPage() {
   const { connection, callerAddressBytes, connect } = useWallet();
@@ -103,8 +104,8 @@ export default function MyPlansPage() {
 
               <div className="mt-3 flex items-center justify-between text-sm text-neutral-400">
                 <span>
-                  {plan.installmentAmount.toString()} per installment · {plan.totalAmount.toString()}{' '}
-                  total
+                  {starToNight(plan.installmentAmount)} NIGHT per installment ·{' '}
+                  {starToNight(plan.totalAmount)} NIGHT total
                 </span>
                 <button
                   onClick={() => pay(planId)}
