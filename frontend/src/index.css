@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+body {
+  background: #0a0a0a;
+  color: #ededed;
+}
+
+@layer components {
+  .input {
+    @apply w-full rounded-lg border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 outline-none focus:border-neutral-400;
+  }
+}
