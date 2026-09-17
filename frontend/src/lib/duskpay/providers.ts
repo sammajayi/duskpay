@@ -1,0 +1,67 @@
+import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
+import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
+import { FetchZkConfigProvider } from '@midnight-ntwrk/midnight-js-fetch-zk-config-provider';
+import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
+import type { MidnightProvider, WalletProvider } from '@midnight-ntwrk/midnight-js-types';
+import { INDEXER_HTTP_URL, INDEXER_WS_URL, PROOF_SERVER_URL } from './config';
+import type { WalletConnection } from './wallet';
+import type { DuskPayCircuitId } from './contract';
+
+/**
+ * Adapts the Lace `ConnectedAPI` (string-serialized transactions) to the
+ * `WalletProvider` / `MidnightProvider` interfaces expected by
+ * `@midnight-ntwrk/midnight-js-contracts`, which operate on the SDK's
+ * `Transaction` objects. Both sides agree on the wire format being the
+ * transaction's serialized string form, so we round-trip through
+ * `tx.serialize()` / treat the wallet's response string as already-finalized.
+ */
+export const createWalletProviders = (
+  connection: WalletConnection,
+): { walletProvider: WalletProvider; midnightProvider: MidnightProvider } => {
+  const { api, coinPublicKey, encryptionPublicKey } = connection;
+
+  const walletProvider: WalletProvider = {
+    getCoinPublicKey: () => coinPublicKey as unknown as ReturnType<WalletProvider['getCoinPublicKey']>,
+    getEncryptionPublicKey: () =>
+      encryptionPublicKey as unknown as ReturnType<WalletProvider['getEncryptionPublicKey']>,
+    balanceTx: async (tx, _ttl) => {
+      const serialized = typeof tx === 'string' ? tx : String(tx);
+      const { tx: balanced } = await api.balanceUnsealedTransaction(serialized);
+      return balanced as unknown as Awaited<ReturnType<WalletProvider['balanceTx']>>;
+    },
+  };
+
+  const midnightProvider: MidnightProvider = {
+    submitTx: async (tx) => {
+      const serialized = typeof tx === 'string' ? tx : String(tx);
+      await api.submitTransaction(serialized);
+      // Lace's submitTransaction resolves with no payload; the transaction's
+      // own identifier is derivable from the serialized tx by callers that
+      // need it (e.g. via the indexer once the tx lands in a block).
+      return serialized as unknown as Awaited<ReturnType<MidnightProvider['submitTx']>>;
+    },
+  };
+
+  return { walletProvider, midnightProvider };
+};
+
+export const createDataProviders = <PCK extends string = DuskPayCircuitId>() => {
+  const zkConfigProvider = new FetchZkConfigProvider<PCK>(
+    typeof window !== 'undefined' ? `${window.location.origin}/zk` : 'http://localhost:3000/zk',
+  );
+
+  return {
+    publicDataProvider: indexerPublicDataProvider(INDEXER_HTTP_URL, INDEXER_WS_URL),
+    proofProvider: httpClientProofProvider(PROOF_SERVER_URL, zkConfigProvider),
+    zkConfigProvider,
+    privateStateProvider: levelPrivateStateProvider<string, null>({
+      privateStoragePasswordProvider: async () => 'duskpay-local-dev',
+      accountId: 'duskpay',
+    }),
+  };
+};
+
+export const createContractProviders = (connection: WalletConnection) => {
+  const { walletProvider, midnightProvider } = createWalletProviders(connection);
+  return { ...createDataProviders(), walletProvider, midnightProvider };
+};
