@@ -8,6 +8,22 @@ services:
       - "9933:9933"
     volumes:
       - midnight-node-data:/node/chain
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -sf
+        - -X
+        - POST
+        - -H
+        - "Content-Type: application/json"
+        - --data
+        - '{"id":1,"jsonrpc":"2.0","method":"system_health","params":[]}'
+        - http://localhost:9944
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
 
   indexer:
     image: midnightntwrk/indexer-standalone:4.2.1
@@ -17,7 +33,8 @@ services:
       - ./indexer-config/config.yaml:/opt/indexer-standalone/config.yaml:ro
       - indexer-data:/data
     depends_on:
-      - midnight-node
+      midnight-node:
+        condition: service_healthy
 
   proof-server:
     image: midnightntwrk/proof-server:8.0.3
