@@ -6,10 +6,20 @@ import { nightToStar } from '../lib/duskpay/night';
 
 const randomPlanId = (): Uint8Array => crypto.getRandomValues(new Uint8Array(32));
 
+/**
+ * Parses a 32-byte hex address, rejecting anything that isn't actually
+ * valid hex — silently zero-filling a typo'd address (the previous
+ * behavior) means funds could go to an address nobody controls, with no
+ * indication anything was wrong until the merchant never gets paid.
+ */
 const hexToBytes32 = (hex: string): Uint8Array => {
-  const clean = hex.trim().replace(/^0x/, '').padStart(64, '0').slice(-64);
+  const clean = hex.trim().replace(/^0x/, '');
+  if (!/^[0-9a-fA-F]{1,64}$/.test(clean)) {
+    throw new Error('Merchant address must be a hex string (up to 64 hex characters, optionally 0x-prefixed)');
+  }
+  const padded = clean.padStart(64, '0');
   const bytes = new Uint8Array(32);
-  for (let i = 0; i < 32; i++) bytes[i] = parseInt(clean.slice(i * 2, i * 2 + 2), 16) || 0;
+  for (let i = 0; i < 32; i++) bytes[i] = parseInt(padded.slice(i * 2, i * 2 + 2), 16);
   return bytes;
 };
 
@@ -38,8 +48,20 @@ export default function RequestPlanPage() {
 
     try {
       const total = nightToStar(totalAmount);
+      if (total <= 0n) {
+        throw new Error('Total amount must be greater than 0');
+      }
+
       const count = BigInt(installmentCount);
+      if (count <= 0n) {
+        throw new Error('Number of installments must be at least 1');
+      }
+
       const installmentAmount = total / count;
+      if (installmentAmount <= 0n) {
+        throw new Error('Total amount is too small to split across that many installments');
+      }
+
       const merchantBytes = hexToBytes32(merchantAddress);
       const privateValue = BigInt(privateInput);
 
