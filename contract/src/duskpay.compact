@@ -1,0 +1,88 @@
+pragma language_version 0.23;
+import CompactStandardLibrary;
+
+struct Plan {
+  borrower: UserAddress,
+  merchant: UserAddress,
+  totalAmount: Uint<64>,
+  installmentAmount: Uint<64>,
+  installmentCount: Uint<32>,
+  paidCount: Uint<32>,
+  eligibilityResult: Boolean
+}
+
+export ledger plans: Map<Bytes<32>, Plan>;
+
+export sealed ledger eligibilityThreshold: Uint<64>;
+
+constructor(threshold: Uint<64>) {
+  eligibilityThreshold = disclose(threshold);
+}
+
+witness callerAddress(): Bytes<32>;
+
+export circuit checkEligibility(privateInput: Uint<64>): Boolean {
+  return privateInput >= disclose(eligibilityThreshold);
+}
+
+export circuit requestPlan(
+  planId: Bytes<32>,
+  merchant: UserAddress,
+  totalAmount: Uint<64>,
+  installmentAmount: Uint<64>,
+  installmentCount: Uint<32>,
+  privateInput: Uint<64>
+): [] {
+  const eligible = checkEligibility(privateInput);
+  assert(eligible, "Not eligible");
+
+  const callerBytes = callerAddress();
+  const borrower = UserAddress { bytes: callerBytes };
+
+  const plan = Plan {
+    borrower: disclose(borrower),
+    merchant: disclose(merchant),
+    totalAmount: disclose(totalAmount),
+    installmentAmount: disclose(installmentAmount),
+    installmentCount: disclose(installmentCount),
+    paidCount: 0 as Uint<32>,
+    eligibilityResult: disclose(eligible)
+  };
+
+  plans.insert(disclose(planId), plan);
+}
+
+export circuit payInstallment(planId: Bytes<32>): [] {
+  assert(plans.member(disclose(planId)), "Plan not found");
+
+  const plan = plans.lookup(disclose(planId));
+  assert(plan.paidCount < plan.installmentCount, "Plan already complete");
+
+  const callerBytes = callerAddress();
+  assert(callerBytes == plan.borrower.bytes, "Only borrower can pay");
+
+  const newPaidCount = (plan.paidCount + 1) as Uint<32>;
+  const updatedPlan = Plan {
+    borrower: plan.borrower,
+    merchant: plan.merchant,
+    totalAmount: plan.totalAmount,
+    installmentAmount: plan.installmentAmount,
+    installmentCount: plan.installmentCount,
+    paidCount: newPaidCount,
+    eligibilityResult: plan.eligibilityResult
+  };
+
+  plans.insert(disclose(planId), updatedPlan);
+
+  sendUnshielded(
+    default<Bytes<32>>,
+    disclose(plan.installmentAmount as Uint<128>),
+    right<ContractAddress, UserAddress>(disclose(plan.merchant))
+  );
+}
+
+export circuit checkStatus(planId: Bytes<32>): [Uint<32>, Uint<32>, Uint<64>, Uint<64>] {
+  assert(plans.member(disclose(planId)), "Plan not found");
+  const plan = plans.lookup(disclose(planId));
+  return [plan.paidCount, plan.installmentCount, plan.installmentAmount, plan.totalAmount];
+}
