@@ -2,6 +2,13 @@
 
 A privacy-preserving Buy Now, Pay Later protocol on Midnight Network. A buyer proves they meet an eligibility threshold with a zero-knowledge proof — only the pass/fail result is ever public, never the value behind it.
 
+## Live
+
+- **App:** https://duskpay.vercel.app/
+- **Contract (Midnight Preview testnet):** [`79d672442d9589f1011c4a2f47ec2dd6b21a51ae230b6939737737607c2cb16c`](https://explorer.preview.midnight.network/contracts/79d672442d9589f1011c4a2f47ec2dd6b21a51ae230b6939737737607c2cb16c)
+
+Proving runs on your own machine, so using the hosted app needs the proof server running locally (`docker compose up -d proof-server`) and Lace set to the Preview network.
+
 See [`proposal.md`](./proposal.md) for the product rationale and scope, and [`duskpay-prd.md`](./duskpay-prd.md) for the original requirements doc.
 
 ## How it works
