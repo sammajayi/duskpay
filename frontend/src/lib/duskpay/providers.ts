@@ -3,6 +3,7 @@ import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client
 import { FetchZkConfigProvider } from '@midnight-ntwrk/midnight-js-fetch-zk-config-provider';
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
 import type { MidnightProvider, WalletProvider } from '@midnight-ntwrk/midnight-js-types';
+import { Transaction } from '@midnight-ntwrk/ledger-v8';
 import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { INDEXER_HTTP_URL, INDEXER_WS_URL, NETWORK_ID, PROOF_SERVER_URL } from './config';
 import type { WalletConnection } from './wallet';
@@ -12,13 +13,28 @@ import type { DuskPayCircuitId, DuskPayPrivateState } from './contract';
 // operation until this is set. Do it once at module load, before any provider is used.
 setNetworkId(NETWORK_ID);
 
+const toHex = (bytes: Uint8Array): string =>
+  Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+
+const fromHex = (hex: string): Uint8Array => {
+  const clean = hex.trim().replace(/^0x/, '');
+  if (clean.length === 0 || clean.length % 2 !== 0 || !/^[0-9a-fA-F]+$/.test(clean)) {
+    throw new Error(`Wallet returned a transaction that is not valid hex (length ${clean.length})`);
+  }
+  const out = new Uint8Array(clean.length / 2);
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(clean.slice(i * 2, i * 2 + 2), 16);
+  return out;
+};
+
 /**
- * Adapts the Lace `ConnectedAPI` (string-serialized transactions) to the
- * `WalletProvider` / `MidnightProvider` interfaces expected by
- * `@midnight-ntwrk/midnight-js-contracts`, which operate on the SDK's
- * `Transaction` objects. Both sides agree on the wire format being the
- * transaction's serialized string form, so we round-trip through
- * `tx.serialize()` / treat the wallet's response string as already-finalized.
+ * Adapts the Lace `ConnectedAPI` to the `WalletProvider` / `MidnightProvider`
+ * interfaces expected by `@midnight-ntwrk/midnight-js-contracts`.
+ *
+ * The two sides speak different types: midnight-js works on ledger
+ * `Transaction` objects, while the DApp connector exchanges hex-encoded
+ * serialized transactions. So we serialize on the way out and deserialize the
+ * wallet's reply. `balanceUnsealedTransaction` takes a proven, pre-binding
+ * transaction and returns a balanced, sealed (bound) one ready to submit.
  */
 export const createWalletProviders = (
   connection: WalletConnection,
@@ -30,20 +46,21 @@ export const createWalletProviders = (
     getEncryptionPublicKey: () =>
       encryptionPublicKey as unknown as ReturnType<WalletProvider['getEncryptionPublicKey']>,
     balanceTx: async (tx, _ttl) => {
-      const serialized = typeof tx === 'string' ? tx : String(tx);
-      const { tx: balanced } = await api.balanceUnsealedTransaction(serialized);
-      return balanced as unknown as Awaited<ReturnType<WalletProvider['balanceTx']>>;
+      const { tx: balancedHex } = await api.balanceUnsealedTransaction(toHex(tx.serialize()));
+      return Transaction.deserialize(
+        'signature',
+        'proof',
+        'binding',
+        fromHex(balancedHex),
+      ) as unknown as Awaited<ReturnType<WalletProvider['balanceTx']>>;
     },
   };
 
   const midnightProvider: MidnightProvider = {
     submitTx: async (tx) => {
-      const serialized = typeof tx === 'string' ? tx : String(tx);
-      await api.submitTransaction(serialized);
-      // Lace's submitTransaction resolves with no payload; the transaction's
-      // own identifier is derivable from the serialized tx by callers that
-      // need it (e.g. via the indexer once the tx lands in a block).
-      return serialized as unknown as Awaited<ReturnType<MidnightProvider['submitTx']>>;
+      await api.submitTransaction(toHex(tx.serialize()));
+      // Lace's submitTransaction resolves with no payload, so take the id from the transaction itself.
+      return tx.identifiers()[0];
     },
   };
 
