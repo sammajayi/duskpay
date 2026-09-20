@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useWallet } from '../lib/duskpay/WalletContext';
 import { connectToDuskPay, deployDuskPay, getStoredContractAddress, planIdToHex } from '../lib/duskpay/client';
 import { nightToStar } from '../lib/duskpay/night';
+import { MidnightBech32m, UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
+import { NETWORK_ID } from '../lib/duskpay/config';
 
 const randomPlanId = (): Uint8Array => crypto.getRandomValues(new Uint8Array(32));
 
@@ -12,10 +14,23 @@ const randomPlanId = (): Uint8Array => crypto.getRandomValues(new Uint8Array(32)
  * behavior) means funds could go to an address nobody controls, with no
  * indication anything was wrong until the merchant never gets paid.
  */
-const hexToBytes32 = (hex: string): Uint8Array => {
-  const clean = hex.trim().replace(/^0x/, '');
+const hexToBytes32 = (input: string): Uint8Array => {
+  const trimmed = input.trim();
+  // Lace shows unshielded addresses as bech32m (mn_addr_preview1…); decode
+  // those, which also rejects an address for the wrong network or a bad checksum.
+  if (trimmed.startsWith('mn_addr')) {
+    try {
+      const decoded = MidnightBech32m.parse(trimmed).decode(UnshieldedAddress, NETWORK_ID);
+      return new Uint8Array(decoded.data);
+    } catch {
+      throw new Error(`Not a valid unshielded address for the ${NETWORK_ID} network (expected mn_addr_${NETWORK_ID}1…)`);
+    }
+  }
+  const clean = trimmed.replace(/^0x/, '');
   if (!/^[0-9a-fA-F]{1,64}$/.test(clean)) {
-    throw new Error('Merchant address must be a hex string (up to 64 hex characters, optionally 0x-prefixed)');
+    throw new Error(
+      'Merchant address must be an mn_addr_… address or a hex string (up to 64 hex characters, optionally 0x-prefixed)',
+    );
   }
   const padded = clean.padStart(64, '0');
   const bytes = new Uint8Array(32);
@@ -114,12 +129,12 @@ export default function RequestPlanPage() {
       )}
 
       <form onSubmit={onSubmit} className="space-y-4">
-        <Field label="Merchant address (hex)">
+        <Field label="Merchant address">
           <input
             required
             value={merchantAddress}
             onChange={(e) => setMerchantAddress(e.target.value)}
-            placeholder="0x…"
+            placeholder="mn_addr_preview1… or 0x…"
             className="input"
           />
         </Field>
