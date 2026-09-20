@@ -3,9 +3,14 @@ import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client
 import { FetchZkConfigProvider } from '@midnight-ntwrk/midnight-js-fetch-zk-config-provider';
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
 import type { MidnightProvider, WalletProvider } from '@midnight-ntwrk/midnight-js-types';
-import { INDEXER_HTTP_URL, INDEXER_WS_URL, PROOF_SERVER_URL } from './config';
+import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
+import { INDEXER_HTTP_URL, INDEXER_WS_URL, NETWORK_ID, PROOF_SERVER_URL } from './config';
 import type { WalletConnection } from './wallet';
 import type { DuskPayCircuitId } from './contract';
+
+// midnight-js throws "Network ID has not been configured" on any contract
+// operation until this is set. Do it once at module load, before any provider is used.
+setNetworkId(NETWORK_ID);
 
 /**
  * Adapts the Lace `ConnectedAPI` (string-serialized transactions) to the
