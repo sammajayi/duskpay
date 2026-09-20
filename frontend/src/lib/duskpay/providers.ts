@@ -51,8 +51,11 @@ export const createWalletProviders = (
 };
 
 export const createDataProviders = <PCK extends string = DuskPayCircuitId>() => {
+  // FetchZkConfigProvider stores fetchFunc on itself and calls it as a method,
+  // so handing it the bare browser `fetch` throws "Illegal invocation". Wrap it.
   const zkConfigProvider = new FetchZkConfigProvider<PCK>(
     typeof window !== 'undefined' ? `${window.location.origin}/zk` : 'http://localhost:3000/zk',
+    (input, init) => fetch(input, init),
   );
 
   return {
