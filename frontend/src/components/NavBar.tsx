@@ -13,6 +13,9 @@ export function NavBar() {
   return (
     <header className="border-b border-neutral-800">
       <div className="mx-auto flex max-w-xl items-center justify-between px-4 py-4">
+        <Link to="/" className="text-lg font-bold tracking-tight text-white">
+          DuskPay
+        </Link>
         <nav className="flex gap-4 text-sm">
           {links.map((l) => (
             <Link

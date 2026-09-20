@@ -83,8 +83,10 @@ export default function RequestPlanPage() {
       const merchantBytes = hexToBytes32(merchantAddress);
       const privateValue = BigInt(privateInput);
 
+      // If an address is configured, connect to it and let any failure surface
+      // as-is — silently deploying a fresh contract on error would hide the real problem.
       let handle = getStoredContractAddress()
-        ? await connectToDuskPay(connection, callerAddressBytes).catch(() => null)
+        ? await connectToDuskPay(connection, callerAddressBytes)
         : null;
 
       if (!handle) {

@@ -36,6 +36,16 @@ export default defineConfig({
     // server's esbuild-based optimizer tolerates it.
     nodePolyfills({ globals: { global: false, Buffer: false, process: true } }),
   ],
+  resolve: {
+    // The frontend imports the compiled contract from ../contract, which has its
+    // own node_modules. Without this, Rollup bundles two copies of each WASM
+    // runtime's JS glue and classes from one fail instanceof checks in the other.
+    dedupe: [
+      '@midnight-ntwrk/compact-runtime',
+      '@midnight-ntwrk/onchain-runtime-v3',
+      '@midnight-ntwrk/ledger-v8',
+    ],
+  },
   optimizeDeps: {
     // Only the wasm-bindgen packages themselves need to bypass esbuild's
     // pre-bundler (it can't handle their wasm imports — vite-plugin-wasm
