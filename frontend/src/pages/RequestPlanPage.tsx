@@ -22,8 +22,11 @@ const hexToBytes32 = (input: string): Uint8Array => {
     try {
       const decoded = MidnightBech32m.parse(trimmed).decode(UnshieldedAddress, NETWORK_ID);
       return new Uint8Array(decoded.data);
-    } catch {
-      throw new Error(`Not a valid unshielded address for the ${NETWORK_ID} network (expected mn_addr_${NETWORK_ID}1…)`);
+    } catch (err) {
+      const reason = err instanceof Error ? `: ${err.message}` : '';
+      throw new Error(
+        `Not a valid unshielded address for the ${NETWORK_ID} network (expected mn_addr_${NETWORK_ID}1…)${reason}`,
+      );
     }
   }
   const clean = trimmed.replace(/^0x/, '');
