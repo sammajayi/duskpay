@@ -63,7 +63,9 @@ export const createDataProviders = <PCK extends string = DuskPayCircuitId>() => 
     proofProvider: httpClientProofProvider(PROOF_SERVER_URL, zkConfigProvider),
     zkConfigProvider,
     privateStateProvider: levelPrivateStateProvider<string, null>({
-      privateStoragePasswordProvider: async () => 'duskpay-local-dev',
+      // The store enforces a password policy (3 of: upper, lower, digit, special).
+      // DuskPay's private state is always null, so nothing sensitive is encrypted here.
+      privateStoragePasswordProvider: async () => 'DuskPay-Local-Dev-2026!',
       accountId: 'duskpay',
     }),
   };
