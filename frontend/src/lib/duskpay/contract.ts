@@ -8,9 +8,12 @@ import {
 /**
  * DuskPay has no persistent witness-backed private state of its own — the only
  * witness, `callerAddress`, derives the caller's address bytes from the
- * connected wallet on every call. Private state is therefore always `null`.
+ * connected wallet on every call. Private state is therefore just an empty
+ * placeholder object. It can't be `null`: midnight-js asserts the stored
+ * private state is non-null before every contract call.
  */
-export type DuskPayPrivateState = null;
+export type DuskPayPrivateState = Record<string, never>;
+export const EMPTY_PRIVATE_STATE: DuskPayPrivateState = {};
 
 export const DUSKPAY_PRIVATE_STATE_ID = 'duskpayPrivateState';
 

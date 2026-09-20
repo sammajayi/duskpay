@@ -6,7 +6,7 @@ import type { MidnightProvider, WalletProvider } from '@midnight-ntwrk/midnight-
 import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { INDEXER_HTTP_URL, INDEXER_WS_URL, NETWORK_ID, PROOF_SERVER_URL } from './config';
 import type { WalletConnection } from './wallet';
-import type { DuskPayCircuitId } from './contract';
+import type { DuskPayCircuitId, DuskPayPrivateState } from './contract';
 
 // midnight-js throws "Network ID has not been configured" on any contract
 // operation until this is set. Do it once at module load, before any provider is used.
@@ -62,9 +62,9 @@ export const createDataProviders = <PCK extends string = DuskPayCircuitId>() => 
     publicDataProvider: indexerPublicDataProvider(INDEXER_HTTP_URL, INDEXER_WS_URL),
     proofProvider: httpClientProofProvider(PROOF_SERVER_URL, zkConfigProvider),
     zkConfigProvider,
-    privateStateProvider: levelPrivateStateProvider<string, null>({
+    privateStateProvider: levelPrivateStateProvider<string, DuskPayPrivateState>({
       // The store enforces a password policy (3 of: upper, lower, digit, special).
-      // DuskPay's private state is always null, so nothing sensitive is encrypted here.
+      // DuskPay's private state is an empty placeholder, so nothing sensitive is encrypted here.
       privateStoragePasswordProvider: async () => 'DuskPay-Local-Dev-2026!',
       accountId: 'duskpay',
     }),

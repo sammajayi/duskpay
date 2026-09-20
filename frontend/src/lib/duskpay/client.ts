@@ -5,6 +5,7 @@ import {
   makeCompiledContract,
   type DuskPayContract,
   type DuskPayPrivateState,
+  EMPTY_PRIVATE_STATE,
 } from './contract';
 import { createContractProviders, createDataProviders } from './providers';
 import type { WalletConnection } from './wallet';
@@ -38,7 +39,7 @@ export const deployDuskPay = async (
   const deployed = await deployContract<DuskPayContract<DuskPayPrivateState>>(providers, {
     compiledContract,
     privateStateId: DUSKPAY_PRIVATE_STATE_ID,
-    initialPrivateState: null,
+    initialPrivateState: EMPTY_PRIVATE_STATE,
     args: [eligibilityThreshold],
   });
 
@@ -67,7 +68,7 @@ export const connectToDuskPay = async (
     compiledContract,
     contractAddress: address,
     privateStateId: DUSKPAY_PRIVATE_STATE_ID,
-    initialPrivateState: null,
+    initialPrivateState: EMPTY_PRIVATE_STATE,
   });
 };
 
