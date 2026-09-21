@@ -13,11 +13,13 @@ See [`proposal.md`](./proposal.md) for the product rationale and scope, and [`du
 
 ## How it works
 
-1. Buyer connects a Lace wallet and enters a purchase amount, merchant address, installment count, and a private eligibility input.
+1. Buyer connects a Lace wallet and enters a purchase description, purchase amount, merchant address, installment count, and a private eligibility input.
 2. The `checkEligibility` circuit checks that input against a public threshold inside a ZK proof — only the boolean result is disclosed.
-3. If eligible, `requestPlan` creates the installment plan on-chain.
-4. The buyer calls `payInstallment` manually for each installment; funds go straight to the merchant (no liquidity pool, no automation).
-5. `checkStatus` / the ledger's `plans` map track paid-vs-total per plan.
+3. If eligible, `requestPlan` creates the installment plan on-chain, recording the borrower (the caller's own address, supplied by the `callerAddress` witness), merchant, amounts, installment count, a 64-byte `description`, and the pass/fail result.
+4. The buyer calls `payInstallment` manually for each installment. Only the borrower can pay. The contract pulls the installment in NIGHT from the borrower's wallet (`receiveUnshielded`) and forwards it to the merchant (`sendUnshielded`) in the same transaction — no liquidity pool, no automation.
+5. `checkStatus` returns `[paidCount, installmentCount, installmentAmount, totalAmount]` for a plan, and the ledger's `plans` map holds the full record. The eligibility threshold is a sealed ledger value set by the constructor at deploy time.
+
+Everything in a plan is public on-chain except the buyer's eligibility input, which never leaves their machine.
 
 ## Project layout
 
@@ -107,7 +109,7 @@ npm run dev
 ## Usage
 
 1. Open the app, click **Connect Lace** (top right).
-2. **Request Plan** (`/`): fill in the merchant's address, total amount, installment count, and your private eligibility input. First submission in a fresh environment deploys the contract (using the threshold field as the constructor argument); afterwards it reuses the address cached in `localStorage`.
+2. **Request Plan** (`/`): fill in a description, the merchant's address, total amount, installment count, and your private eligibility input. First submission in a fresh environment deploys the contract (using the threshold field as the constructor argument); afterwards it reuses the address cached in `localStorage`.
 3. **My Plans** (`/plans`): see every plan belonging to the connected wallet, with a progress bar and a "Pay next" button.
 4. **Plan Detail** (`/plans/:id`): full breakdown of on-chain fields, plus an explicit note on what stayed private.
 
