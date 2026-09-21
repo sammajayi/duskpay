@@ -8,6 +8,7 @@ struct Plan {
   installmentAmount: Uint<64>,
   installmentCount: Uint<32>,
   paidCount: Uint<32>,
+  description: Bytes<64>,
   eligibilityResult: Boolean
 }
 
@@ -31,6 +32,7 @@ export circuit requestPlan(
   totalAmount: Uint<64>,
   installmentAmount: Uint<64>,
   installmentCount: Uint<32>,
+  description: Bytes<64>,
   privateInput: Uint<64>
 ): [] {
   const eligible = checkEligibility(privateInput);
@@ -46,6 +48,7 @@ export circuit requestPlan(
     installmentAmount: disclose(installmentAmount),
     installmentCount: disclose(installmentCount),
     paidCount: 0 as Uint<32>,
+    description: disclose(description),
     eligibilityResult: disclose(eligible)
   };
 
@@ -69,10 +72,20 @@ export circuit payInstallment(planId: Bytes<32>): [] {
     installmentAmount: plan.installmentAmount,
     installmentCount: plan.installmentCount,
     paidCount: newPaidCount,
+    description: plan.description,
     eligibilityResult: plan.eligibilityResult
   };
 
   plans.insert(disclose(planId), updatedPlan);
+
+  // The contract can only send NIGHT it holds, so first pull this installment
+  // from the borrower's wallet into the contract, then forward it to the merchant.
+  // (The wallet's balancing step supplies the input.) Without this receive, the
+  // send below has nothing to spend and the call fails in its fallible section.
+  receiveUnshielded(
+    default<Bytes<32>>,
+    disclose(plan.installmentAmount as Uint<128>)
+  );
 
   sendUnshielded(
     default<Bytes<32>>,

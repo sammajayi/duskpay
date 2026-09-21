@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useWallet } from '../lib/duskpay/WalletContext';
 import { connectToDuskPay, deployDuskPay, getStoredContractAddress, planIdToHex } from '../lib/duskpay/client';
 import { nightToStar } from '../lib/duskpay/night';
+import { DESCRIPTION_BYTES, encodeDescription } from '../lib/duskpay/description';
 import { MidnightBech32m, UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 import { NETWORK_ID } from '../lib/duskpay/config';
 
@@ -46,6 +47,7 @@ export default function RequestPlanPage() {
   const navigate = useNavigate();
 
   const [merchantAddress, setMerchantAddress] = useState('');
+  const [description, setDescription] = useState('');
   const [totalAmount, setTotalAmount] = useState('');
   const [installmentCount, setInstallmentCount] = useState('4');
   const [privateInput, setPrivateInput] = useState('');
@@ -81,6 +83,7 @@ export default function RequestPlanPage() {
       }
 
       const merchantBytes = hexToBytes32(merchantAddress);
+      const descriptionBytes = encodeDescription(description);
       const privateValue = BigInt(privateInput);
 
       // If an address is configured, connect to it and let any failure surface
@@ -103,6 +106,7 @@ export default function RequestPlanPage() {
         total,
         installmentAmount,
         count,
+        descriptionBytes,
         privateValue,
       );
 
@@ -142,6 +146,21 @@ export default function RequestPlanPage() {
             placeholder="mn_addr_preview1… or 0x…"
             className="input"
           />
+        </Field>
+
+        <Field label="What is this payment for?">
+          <input
+            required
+            type="text"
+            maxLength={DESCRIPTION_BYTES}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="e.g. Payment for iPhone 18"
+            className="input"
+          />
+          <p className="mt-1 text-xs text-neutral-500">
+            Shown on your plan. This is stored on-chain, so it is public — don't include personal details.
+          </p>
         </Field>
 
         <Field label="Total amount (NIGHT)">

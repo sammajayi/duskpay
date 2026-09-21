@@ -5,6 +5,8 @@ import { Contract, ledger } from '../managed/contract/index.js';
 const COIN = '0'.repeat(64);
 const ADDR = RT.sampleContractAddress();
 const THRESHOLD = 5000n;
+const DESCRIPTION = (() => { const b = new Uint8Array(64); b.set(new TextEncoder().encode('Payment for iPhone 18')); return b; })();
+
 
 const createContext = (secretKey: Uint8Array = new Uint8Array(32)) => {
   const contract = new Contract({
@@ -66,6 +68,7 @@ describe('DuskPay circuits', () => {
         totalAmount,
         installmentAmount,
         installmentCount,
+        DESCRIPTION,
         6000n
       );
       expect(result.result).toEqual([]);
@@ -73,6 +76,7 @@ describe('DuskPay circuits', () => {
       const state = ledger(result.context.currentQueryContext.state);
       const plan = state.plans.lookup(planId);
       expect(plan).toBeDefined();
+      expect(plan.description).toEqual(DESCRIPTION);
       expect(plan.totalAmount).toBe(totalAmount);
       expect(plan.installmentAmount).toBe(installmentAmount);
       expect(plan.installmentCount).toBe(installmentCount);
@@ -83,7 +87,7 @@ describe('DuskPay circuits', () => {
     it('fails when not eligible', () => {
       expect(() =>
         contract.impureCircuits.requestPlan(
-          ctx, planId, merchant, totalAmount, installmentAmount, installmentCount, 4000n
+          ctx, planId, merchant, totalAmount, installmentAmount, installmentCount, DESCRIPTION, 4000n
         )
       ).toThrow('Not eligible');
     });
@@ -94,7 +98,7 @@ describe('DuskPay circuits', () => {
       const { contract: c2, ctx: ctx2 } = createContext(secretKey);
 
       const result = c2.impureCircuits.requestPlan(
-        ctx2, planId, merchant, totalAmount, installmentAmount, installmentCount, 6000n
+        ctx2, planId, merchant, totalAmount, installmentAmount, installmentCount, DESCRIPTION, 6000n
       );
       const state = ledger(result.context.currentQueryContext.state);
       const plan = state.plans.lookup(planId);
@@ -112,7 +116,7 @@ describe('DuskPay circuits', () => {
 
     beforeEach(() => {
       const result = contract.impureCircuits.requestPlan(
-        ctx, planId, merchant, totalAmount, installmentAmount, installmentCount, 6000n
+        ctx, planId, merchant, totalAmount, installmentAmount, installmentCount, DESCRIPTION, 6000n
       );
       ctx = result.context;
     });
@@ -158,7 +162,7 @@ describe('DuskPay circuits', () => {
 
     beforeEach(() => {
       const result = contract.impureCircuits.requestPlan(
-        ctx, planId, merchant, totalAmount, installmentAmount, installmentCount, 6000n
+        ctx, planId, merchant, totalAmount, installmentAmount, installmentCount, DESCRIPTION, 6000n
       );
       ctx = result.context;
     });

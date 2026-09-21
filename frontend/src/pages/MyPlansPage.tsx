@@ -1,3 +1,4 @@
+import { decodeDescription } from '../lib/duskpay/description';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useWallet } from '../lib/duskpay/WalletContext';
@@ -88,7 +89,7 @@ export default function MyPlansPage() {
             <li key={idHex} className="rounded-lg border border-neutral-800 bg-neutral-900 p-4">
               <div className="flex items-center justify-between">
                 <Link to={`/plans/${idHex}`} className="font-medium hover:underline">
-                  Plan {idHex.slice(0, 8)}…
+                  {decodeDescription(plan.description) || `Plan ${idHex.slice(0, 8)}…`}
                 </Link>
                 <span className="text-sm text-neutral-400">
                   {plan.paidCount.toString()} / {plan.installmentCount.toString()} paid

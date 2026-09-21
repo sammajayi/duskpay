@@ -13,6 +13,7 @@ export type ImpureCircuits<PS> = {
               totalAmount_0: bigint,
               installmentAmount_0: bigint,
               installmentCount_0: bigint,
+              description_0: Uint8Array,
               privateInput_0: bigint): __compactRuntime.CircuitResults<PS, []>;
   payInstallment(context: __compactRuntime.CircuitContext<PS>,
                  planId_0: Uint8Array): __compactRuntime.CircuitResults<PS, []>;
@@ -31,6 +32,7 @@ export type ProvableCircuits<PS> = {
               totalAmount_0: bigint,
               installmentAmount_0: bigint,
               installmentCount_0: bigint,
+              description_0: Uint8Array,
               privateInput_0: bigint): __compactRuntime.CircuitResults<PS, []>;
   payInstallment(context: __compactRuntime.CircuitContext<PS>,
                  planId_0: Uint8Array): __compactRuntime.CircuitResults<PS, []>;
@@ -52,6 +54,7 @@ export type Circuits<PS> = {
               totalAmount_0: bigint,
               installmentAmount_0: bigint,
               installmentCount_0: bigint,
+              description_0: Uint8Array,
               privateInput_0: bigint): __compactRuntime.CircuitResults<PS, []>;
   payInstallment(context: __compactRuntime.CircuitContext<PS>,
                  planId_0: Uint8Array): __compactRuntime.CircuitResults<PS, []>;
@@ -72,6 +75,7 @@ export type Ledger = {
                                  installmentAmount: bigint,
                                  installmentCount: bigint,
                                  paidCount: bigint,
+                                 description: Uint8Array,
                                  eligibilityResult: boolean
                                };
     [Symbol.iterator](): Iterator<[Uint8Array, { borrower: { bytes: Uint8Array },
@@ -80,6 +84,7 @@ export type Ledger = {
   installmentAmount: bigint,
   installmentCount: bigint,
   paidCount: bigint,
+  description: Uint8Array,
   eligibilityResult: boolean
 }]>
   };

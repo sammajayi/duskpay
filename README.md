@@ -5,7 +5,7 @@ A privacy-preserving Buy Now, Pay Later protocol on Midnight Network. A buyer pr
 ## Live
 
 - **App:** https://duskpay.vercel.app/
-- **Contract (Midnight Preview testnet):** [`79d672442d9589f1011c4a2f47ec2dd6b21a51ae230b6939737737607c2cb16c`](https://explorer.preview.midnight.network/contracts/79d672442d9589f1011c4a2f47ec2dd6b21a51ae230b6939737737607c2cb16c)
+- **Contract (Midnight Preview testnet):** [`a41e881d9d1278926b988d1a2a52f8db9ac7f7f66a6835e4ce441ef83e9d3bc1`](https://explorer.preview.midnight.network/contracts/a41e881d9d1278926b988d1a2a52f8db9ac7f7f66a6835e4ce441ef83e9d3bc1)
 
 Proving runs on your own machine, so using the hosted app needs the proof server running locally (`docker compose up -d proof-server`) and Lace set to the Preview network.
 
@@ -39,7 +39,7 @@ docker compose up -d proof-server      # required: proving always runs on your m
 cd frontend && npm run dev             # http://localhost:5173
 ```
 
-Then open the app, switch Lace to the **Preview** network, connect, and request a plan. To use the contract listed under [Live](#live) instead of deploying a fresh one on your first plan request, create `frontend/.env.local` containing `VITE_CONTRACT_ADDRESS=79d672442d9589f1011c4a2f47ec2dd6b21a51ae230b6939737737607c2cb16c` (see `frontend/.env.example`) before `npm run dev`. Your Lace account needs Preview **tNIGHT** and **DUST** to pay fees — get tNIGHT from the Midnight Preview faucet; DUST is generated from registered NIGHT.
+Then open the app, switch Lace to the **Preview** network, connect, and request a plan. To use the contract listed under [Live](#live) instead of deploying a fresh one on your first plan request, create `frontend/.env.local` containing `VITE_CONTRACT_ADDRESS=a41e881d9d1278926b988d1a2a52f8db9ac7f7f66a6835e4ce441ef83e9d3bc1` (see `frontend/.env.example`) before `npm run dev`. Your Lace account needs Preview **tNIGHT** and **DUST** to pay fees — get tNIGHT from the Midnight Preview faucet; DUST is generated from registered NIGHT.
 
 ## Prerequisites
 

@@ -1,3 +1,4 @@
+import { decodeDescription } from '../lib/duskpay/description';
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useWallet } from '../lib/duskpay/WalletContext';
@@ -67,6 +68,7 @@ export default function PlanDetailPage() {
           On-chain (public)
         </h2>
         <dl className="space-y-2 text-sm">
+          <Row label="Description" value={decodeDescription(plan.description) || '—'} />
           <Row label="Borrower" value={hex(plan.borrower.bytes)} />
           <Row label="Merchant" value={hex(plan.merchant.bytes)} />
           <Row label="Total amount" value={`${starToNight(plan.totalAmount)} NIGHT`} />

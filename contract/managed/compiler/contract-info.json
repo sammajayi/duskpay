@@ -70,6 +70,13 @@
           }
         },
         {
+          "name": "description",
+          "type": {
+            "type-name": "Bytes",
+            "length": 64
+          }
+        },
+        {
           "name": "privateInput",
           "type": {
             "type-name": "Uint",
@@ -223,6 +230,13 @@
             "type": {
               "type-name": "Uint",
               "maxval": 4294967295
+            }
+          },
+          {
+            "name": "description",
+            "type": {
+              "type-name": "Bytes",
+              "length": 64
             }
           },
           {

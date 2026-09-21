@@ -53,7 +53,7 @@ if (!WALLET_SEED) {
   process.exit(1);
 }
 
-type DuskPayPrivateState = null;
+type DuskPayPrivateState = Record<string, never>;
 
 // DuskPay's only witness derives the caller's address from the deploying
 // wallet's own coin public key — there's no persisted private state.
@@ -159,7 +159,7 @@ async function main() {
   const deployed = await deployContract(providers as never, {
     compiledContract,
     privateStateId: 'duskpayPrivateState',
-    initialPrivateState: null,
+    initialPrivateState: {},
     args: [threshold],
   } as never);
 
