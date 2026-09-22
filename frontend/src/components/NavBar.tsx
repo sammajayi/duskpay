@@ -2,8 +2,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { useWallet } from '../lib/duskpay/WalletContext';
 
 const links = [
-  { href: '/', label: 'Request Plan' },
-  { href: '/plans', label: 'My Plans' },
+  { href: '/app', label: 'Request Plan' },
+  { href: '/app/plans', label: 'My Plans' },
 ];
 
 export function NavBar() {
