@@ -1,5 +1,8 @@
 # DuskPay
 
+![Contract CI](https://github.com/sammajayi/duskpay/actions/workflows/contract-ci.yml/badge.svg)
+![Frontend CI](https://github.com/sammajayi/duskpay/actions/workflows/frontend-ci.yml/badge.svg)
+
 A privacy-preserving Buy Now, Pay Later protocol on Midnight Network. A buyer proves they meet an eligibility threshold with a zero-knowledge proof — only the pass/fail result is ever public, never the value behind it.
 
 ## Live
