@@ -130,7 +130,8 @@ export default function LandingPage() {
             <GhostButton href={DEMO_URL}>Watch 3-min demo</GhostButton>
           </div>
           <p className="mt-5 text-[13px] text-[#6f6d7a]">
-            Needs Lace wallet on Preview &middot; proving runs on your own machine
+            Needs Lace wallet connected to Preview &middot; zero-knowledge proving runs locally on
+            your machine, not on Midnight's servers
           </p>
         </div>
       </div>
