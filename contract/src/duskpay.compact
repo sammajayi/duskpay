@@ -1,6 +1,30 @@
 pragma language_version 0.23;
 import CompactStandardLibrary;
 
+/*
+ * Privacy Model for DuskPay
+ *
+ * Public (on-chain):
+ *   - Plan metadata: borrower address, merchant address, total amount,
+ *     installment amount, installment count, paid count, description,
+ *     eligibility result (boolean pass/fail)
+ *   - Eligibility threshold (sealed ledger value, set at deploy)
+ *   - Contract address and all plan IDs
+ *   - All payment flows: amounts transferred from borrower to merchant
+ *
+ * Private (never leaves user's machine):
+ *   - Buyer's eligibility input (the private value checked against threshold)
+ *   - The ZK proof witness data used to prove eligibility
+ *
+ * The `checkEligibility` circuit proves `privateInput >= eligibilityThreshold`
+ * without revealing `privateInput`. Only the boolean result is disclosed
+ * and stored on-chain in `Plan.eligibilityResult`.
+ *
+ * The `callerAddress` witness supplies the caller's address without it being
+ * a public input to the circuit, preserving sender privacy within the
+ * transaction context.
+ */
+
 struct Plan {
   borrower: UserAddress,
   merchant: UserAddress,

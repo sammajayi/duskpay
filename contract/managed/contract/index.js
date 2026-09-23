@@ -149,14 +149,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('checkEligibility',
                                      'argument 1 (as invoked from Typescript)',
-                                     'duskpay.compact line 25 char 1',
+                                     'duskpay.compact line 49 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(privateInput_0) === 'bigint' && privateInput_0 >= 0n && privateInput_0 <= 18446744073709551615n)) {
           __compactRuntime.typeError('checkEligibility',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'duskpay.compact line 25 char 1',
+                                     'duskpay.compact line 49 char 1',
                                      'Uint<0..18446744073709551616>',
                                      privateInput_0)
         }
@@ -191,56 +191,56 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('requestPlan',
                                      'argument 1 (as invoked from Typescript)',
-                                     'duskpay.compact line 29 char 1',
+                                     'duskpay.compact line 53 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(planId_0.buffer instanceof ArrayBuffer && planId_0.BYTES_PER_ELEMENT === 1 && planId_0.length === 32)) {
           __compactRuntime.typeError('requestPlan',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'duskpay.compact line 29 char 1',
+                                     'duskpay.compact line 53 char 1',
                                      'Bytes<32>',
                                      planId_0)
         }
         if (!(typeof(merchant_0) === 'object' && merchant_0.bytes.buffer instanceof ArrayBuffer && merchant_0.bytes.BYTES_PER_ELEMENT === 1 && merchant_0.bytes.length === 32)) {
           __compactRuntime.typeError('requestPlan',
                                      'argument 2 (argument 3 as invoked from Typescript)',
-                                     'duskpay.compact line 29 char 1',
+                                     'duskpay.compact line 53 char 1',
                                      'struct UserAddress<bytes: Bytes<32>>',
                                      merchant_0)
         }
         if (!(typeof(totalAmount_0) === 'bigint' && totalAmount_0 >= 0n && totalAmount_0 <= 18446744073709551615n)) {
           __compactRuntime.typeError('requestPlan',
                                      'argument 3 (argument 4 as invoked from Typescript)',
-                                     'duskpay.compact line 29 char 1',
+                                     'duskpay.compact line 53 char 1',
                                      'Uint<0..18446744073709551616>',
                                      totalAmount_0)
         }
         if (!(typeof(installmentAmount_0) === 'bigint' && installmentAmount_0 >= 0n && installmentAmount_0 <= 18446744073709551615n)) {
           __compactRuntime.typeError('requestPlan',
                                      'argument 4 (argument 5 as invoked from Typescript)',
-                                     'duskpay.compact line 29 char 1',
+                                     'duskpay.compact line 53 char 1',
                                      'Uint<0..18446744073709551616>',
                                      installmentAmount_0)
         }
         if (!(typeof(installmentCount_0) === 'bigint' && installmentCount_0 >= 0n && installmentCount_0 <= 4294967295n)) {
           __compactRuntime.typeError('requestPlan',
                                      'argument 5 (argument 6 as invoked from Typescript)',
-                                     'duskpay.compact line 29 char 1',
+                                     'duskpay.compact line 53 char 1',
                                      'Uint<0..4294967296>',
                                      installmentCount_0)
         }
         if (!(description_0.buffer instanceof ArrayBuffer && description_0.BYTES_PER_ELEMENT === 1 && description_0.length === 64)) {
           __compactRuntime.typeError('requestPlan',
                                      'argument 6 (argument 7 as invoked from Typescript)',
-                                     'duskpay.compact line 29 char 1',
+                                     'duskpay.compact line 53 char 1',
                                      'Bytes<64>',
                                      description_0)
         }
         if (!(typeof(privateInput_0) === 'bigint' && privateInput_0 >= 0n && privateInput_0 <= 18446744073709551615n)) {
           __compactRuntime.typeError('requestPlan',
                                      'argument 7 (argument 8 as invoked from Typescript)',
-                                     'duskpay.compact line 29 char 1',
+                                     'duskpay.compact line 53 char 1',
                                      'Uint<0..18446744073709551616>',
                                      privateInput_0)
         }
@@ -275,14 +275,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('payInstallment',
                                      'argument 1 (as invoked from Typescript)',
-                                     'duskpay.compact line 58 char 1',
+                                     'duskpay.compact line 82 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(planId_0.buffer instanceof ArrayBuffer && planId_0.BYTES_PER_ELEMENT === 1 && planId_0.length === 32)) {
           __compactRuntime.typeError('payInstallment',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'duskpay.compact line 58 char 1',
+                                     'duskpay.compact line 82 char 1',
                                      'Bytes<32>',
                                      planId_0)
         }
@@ -311,14 +311,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('checkStatus',
                                      'argument 1 (as invoked from Typescript)',
-                                     'duskpay.compact line 97 char 1',
+                                     'duskpay.compact line 121 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(planId_0.buffer instanceof ArrayBuffer && planId_0.BYTES_PER_ELEMENT === 1 && planId_0.length === 32)) {
           __compactRuntime.typeError('checkStatus',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'duskpay.compact line 97 char 1',
+                                     'duskpay.compact line 121 char 1',
                                      'Bytes<32>',
                                      planId_0)
         }
@@ -371,7 +371,7 @@ export class Contract {
     if (!(typeof(threshold_0) === 'bigint' && threshold_0 >= 0n && threshold_0 <= 18446744073709551615n)) {
       __compactRuntime.typeError('Contract state constructor',
                                  'argument 1 (argument 2 as invoked from Typescript)',
-                                 'duskpay.compact line 19 char 1',
+                                 'duskpay.compact line 43 char 1',
                                  'Uint<0..18446744073709551616>',
                                  threshold_0)
     }
@@ -593,7 +593,7 @@ export class Contract {
     if (!(result_0.buffer instanceof ArrayBuffer && result_0.BYTES_PER_ELEMENT === 1 && result_0.length === 32)) {
       __compactRuntime.typeError('callerAddress',
                                  'return value',
-                                 'duskpay.compact line 23 char 1',
+                                 'duskpay.compact line 47 char 1',
                                  'Bytes<32>',
                                  result_0)
     }
@@ -707,7 +707,7 @@ export class Contract {
                             'Only borrower can pay');
     const newPaidCount_0 = ((t1) => {
                              if (t1 > 4294967295n) {
-                               throw new __compactRuntime.CompactError('duskpay.compact line 67 char 24: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 4294967295');
+                               throw new __compactRuntime.CompactError('duskpay.compact line 91 char 24: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 4294967295');
                              }
                              return t1;
                            })(plan_0.paidCount + 1n);
@@ -860,7 +860,7 @@ export function ledger(stateOrChargedState) {
         if (!(key_0.buffer instanceof ArrayBuffer && key_0.BYTES_PER_ELEMENT === 1 && key_0.length === 32)) {
           __compactRuntime.typeError('member',
                                      'argument 1',
-                                     'duskpay.compact line 15 char 1',
+                                     'duskpay.compact line 39 char 1',
                                      'Bytes<32>',
                                      key_0)
         }
@@ -889,7 +889,7 @@ export function ledger(stateOrChargedState) {
         if (!(key_0.buffer instanceof ArrayBuffer && key_0.BYTES_PER_ELEMENT === 1 && key_0.length === 32)) {
           __compactRuntime.typeError('lookup',
                                      'argument 1',
-                                     'duskpay.compact line 15 char 1',
+                                     'duskpay.compact line 39 char 1',
                                      'Bytes<32>',
                                      key_0)
         }
