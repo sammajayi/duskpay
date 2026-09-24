@@ -1,3 +1,5 @@
+<img src=".github/assets/logo.png" alt="" width="40" height="40" align="left" />
+
 # DuskPay
 
 ![Contract CI](https://github.com/sammajayi/duskpay/actions/workflows/contract-ci.yml/badge.svg)
