@@ -12,7 +12,8 @@ A privacy-preserving Buy Now, Pay Later protocol on Midnight Network. A buyer pr
 - **App:** https://duskpay.vercel.app/
 - **Demo video:** https://www.loom.com/share/411ff3a3029a4e1aaaefab0f032e5896
 - **X:** [@duskpayy](https://x.com/duskpayy) — Privacy-preserving BNPL on Midnight. ZK eligibility proofs, on-chain installment plans, no liquidity pools. Building for Midnight Preview testnet.
-- **Latest post:** [Announcing DuskPay on Midnight Preview](https://x.com/duskpayy/status/2102822625936580813)
+- **Latest post:** [Introducing DuskPay](https://x.com/duskpayy/status/2103244755920421140)
+- [Announcing DuskPay on Midnight Preview](https://x.com/duskpayy/status/2102822625936580813)
 - **Contract (Midnight Preview testnet):** [`a41e881d9d1278926b988d1a2a52f8db9ac7f7f66a6835e4ce441ef83e9d3bc1`](https://explorer.preview.midnight.network/contracts/a41e881d9d1278926b988d1a2a52f8db9ac7f7f66a6835e4ce441ef83e9d3bc1)
 
 Proving runs on your own machine, so using the hosted app needs the proof server running locally (`docker compose up -d proof-server`) and Lace set to the Preview network.
