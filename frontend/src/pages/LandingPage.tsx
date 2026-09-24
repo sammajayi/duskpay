@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import logoMark from '../assets/logo-mark.png';
 
 const CONTRACT_ADDRESS =
   'a41e881d9d1278926b988d1a2a52f8db9ac7f7f66a6835e4ce441ef83e9d3bc1';
@@ -8,10 +9,8 @@ const GITHUB_URL = 'https://github.com/sammajayi/duskpay';
 const X_URL = 'https://x.com/duskpayy';
 const DOCS_URL = 'https://docs.midnight.network/';
 
-function Logo() {
-  return (
-    <div className="h-[26px] w-[26px] flex-shrink-0 rounded-[7px] bg-gradient-to-br from-[#7c8cff] to-[#2c2f66]" />
-  );
+function Logo({ size = 26 }: { size?: number }) {
+  return <img src={logoMark} alt="" className="flex-shrink-0" style={{ height: size, width: 'auto' }} />;
 }
 
 function PrimaryButton({ href, children }: { href: string; children: React.ReactNode }) {
@@ -309,7 +308,7 @@ export default function LandingPage() {
       <div className="flex w-full justify-center border-t border-[#1b1b24]">
         <div className="flex w-full max-w-[1200px] flex-col items-center gap-4 px-6 py-11 sm:flex-row sm:justify-between md:px-10">
           <div className="flex items-center gap-2.5">
-            <div className="h-5 w-5 rounded-[6px] bg-gradient-to-br from-[#7c8cff] to-[#2c2f66]" />
+            <Logo size={20} />
             <span className="text-sm text-[#6f6d7a]">
               DuskPay: private BNPL on Midnight Network
             </span>

@@ -54,37 +54,60 @@ export default function PlanDetailPage() {
     }
   };
 
-  if (plan === undefined) return <p className="text-sm text-neutral-400">Loading…</p>;
-  if (plan === null) return <p className="text-sm text-neutral-400">Plan not found.</p>;
+  if (plan === undefined) return <p className="text-sm text-[#6f6d7a]">Loading…</p>;
+  if (plan === null) return <p className="text-sm text-[#6f6d7a]">Plan not found.</p>;
 
   const complete = plan.paidCount >= plan.installmentCount;
+  const progress = Number(plan.paidCount) / Number(plan.installmentCount);
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Plan detail</h1>
+    <div className="space-y-8">
+      <div>
+        <span className="font-mono-sans text-xs font-semibold uppercase tracking-[0.14em] text-[#7c8cff]">
+          Plan detail
+        </span>
+        <h1 className="font-serif-display mt-2 text-[28px] font-medium">
+          {decodeDescription(plan.description) || 'Untitled plan'}
+        </h1>
 
-      <section className="rounded-lg border border-neutral-800 bg-neutral-900 p-4">
-        <h2 className="mb-3 text-sm font-medium uppercase tracking-wide text-neutral-400">
+        <div className="mt-4 flex items-center gap-3">
+          <div className="h-1.5 w-full max-w-[220px] overflow-hidden rounded-full bg-[#1b1b24]">
+            <div
+              className={`h-full rounded-full ${complete ? 'bg-[#7ee787]' : 'bg-[#7c8cff]'}`}
+              style={{ width: `${Math.min(100, progress * 100)}%` }}
+            />
+          </div>
+          <span className="text-sm text-[#a8a6b3]">
+            {plan.paidCount.toString()} / {plan.installmentCount.toString()} paid
+          </span>
+        </div>
+      </div>
+
+      <section className="rounded-2xl border border-[#1b1b24] bg-[#111119] p-6">
+        <h2 className="mb-4 text-xs font-semibold uppercase tracking-[0.14em] text-[#6f6d7a]">
           On-chain (public)
         </h2>
-        <dl className="space-y-2 text-sm">
-          <Row label="Description" value={decodeDescription(plan.description) || '—'} />
+        <dl className="space-y-3 text-sm">
           <Row label="Borrower" value={hex(plan.borrower.bytes)} />
           <Row label="Merchant" value={hex(plan.merchant.bytes)} />
           <Row label="Total amount" value={`${starToNight(plan.totalAmount)} NIGHT`} />
           <Row label="Installment amount" value={`${starToNight(plan.installmentAmount)} NIGHT`} />
           <Row label="Installments paid" value={`${plan.paidCount} / ${plan.installmentCount}`} />
-          <Row label="Eligibility check" value={plan.eligibilityResult ? 'Passed' : 'Failed'} />
+          <Row
+            label="Eligibility check"
+            value={plan.eligibilityResult ? 'Passed' : 'Failed'}
+            accent={plan.eligibilityResult ? '#7ee787' : '#ff7b72'}
+          />
         </dl>
       </section>
 
-      <section className="rounded-lg border border-dashed border-neutral-700 bg-neutral-950 p-4">
-        <h2 className="mb-2 text-sm font-medium uppercase tracking-wide text-neutral-400">
+      <section className="rounded-2xl border border-dashed border-[#3a2f5c] bg-[#15151a] p-6">
+        <h2 className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-[#7c8cff]">
           Stayed private
         </h2>
-        <p className="text-sm text-neutral-400">
+        <p className="text-sm leading-[1.6] text-[#a8a6b3]">
           The raw value used to check eligibility (e.g. income or credit signal) was never sent
-          on-chain. Only the pass/fail <span className="text-neutral-200">Eligibility check</span>{' '}
+          on-chain. Only the pass/fail <span className="text-[#f2f0ea]">eligibility check</span>{' '}
           result above is public — the number itself was consumed locally inside a zero-knowledge
           proof.
         </p>
@@ -94,22 +117,31 @@ export default function PlanDetailPage() {
         <button
           onClick={connection ? pay : connect}
           disabled={paying}
-          className="w-full rounded-lg bg-white py-2 font-medium text-black disabled:opacity-50"
+          className="w-full rounded-lg border border-[#f2f0ea] bg-[#f2f0ea] py-3 font-mono-sans text-[15px] font-semibold text-[#0a0a0f] transition-opacity hover:opacity-85 disabled:opacity-50"
         >
           {!connection ? 'Connect wallet to pay' : paying ? 'Paying…' : 'Pay next installment'}
         </button>
       )}
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && (
+        <p className="rounded-lg border border-[#3a1f22] bg-[#1a1116] p-3 text-sm text-[#ff7b72]">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
 
-function Row({ label, value }: { label: string; value: string }) {
+function Row({ label, value, accent }: { label: string; value: string; accent?: string }) {
   return (
     <div className="flex items-center justify-between gap-4">
-      <dt className="text-neutral-400">{label}</dt>
-      <dd className="truncate font-mono text-xs text-neutral-200">{value}</dd>
+      <dt className="text-[#6f6d7a]">{label}</dt>
+      <dd
+        className="truncate font-mono-sans text-xs"
+        style={{ color: accent ?? '#f2f0ea' }}
+      >
+        {value}
+      </dd>
     </div>
   );
 }

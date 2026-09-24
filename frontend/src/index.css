@@ -15,6 +15,6 @@ body {
 
 @layer components {
   .input {
-    @apply w-full rounded-lg border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 outline-none focus:border-neutral-400;
+    @apply w-full rounded-lg border border-[#26262f] bg-[#15151f] px-3.5 py-2.5 text-[15px] text-[#f2f0ea] outline-none transition-colors placeholder:text-[#6f6d7a] focus:border-[#7c8cff];
   }
 }

@@ -56,9 +56,12 @@ export default function MyPlansPage() {
 
   if (!connection) {
     return (
-      <div className="rounded-lg border border-neutral-800 bg-neutral-900 p-4 text-sm text-neutral-300">
-        Connect your Lace wallet to see your plans.
-        <button onClick={connect} className="ml-2 underline">
+      <div className="flex items-center justify-between gap-4 rounded-xl border border-[#26262f] bg-[#15151f] p-4 text-sm text-[#a8a6b3]">
+        <span>Connect your Lace wallet to see your plans.</span>
+        <button
+          onClick={connect}
+          className="flex-shrink-0 rounded-lg border border-[#f2f0ea] bg-[#f2f0ea] px-3.5 py-1.5 text-xs font-semibold text-[#0a0a0f] transition-opacity hover:opacity-85"
+        >
           Connect now
         </button>
       </div>
@@ -66,52 +69,73 @@ export default function MyPlansPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">My plans</h1>
+    <div className="space-y-8">
+      <div>
+        <span className="font-mono-sans text-xs font-semibold uppercase tracking-[0.14em] text-[#7c8cff]">
+          Your plans
+        </span>
+        <h1 className="font-serif-display mt-2 text-[32px] font-medium">My plans</h1>
+      </div>
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
-
-      {plans === null && <p className="text-sm text-neutral-400">Loading…</p>}
-
-      {plans?.length === 0 && (
-        <p className="text-sm text-neutral-400">
-          No plans yet. <Link to="/" className="underline">Request one</Link>.
+      {error && (
+        <p className="rounded-lg border border-[#3a1f22] bg-[#1a1116] p-3 text-sm text-[#ff7b72]">
+          {error}
         </p>
       )}
 
-      <ul className="space-y-3">
+      {plans === null && <p className="text-sm text-[#6f6d7a]">Loading…</p>}
+
+      {plans?.length === 0 && (
+        <div className="rounded-2xl border border-dashed border-[#26262f] bg-[#111119] p-10 text-center">
+          <p className="text-sm text-[#a8a6b3]">
+            No plans yet.{' '}
+            <Link to="/" className="text-[#7c8cff] underline underline-offset-2">
+              Request one
+            </Link>
+            .
+          </p>
+        </div>
+      )}
+
+      <ul className="space-y-4">
         {plans?.map(({ planId, plan }) => {
           const idHex = planIdToHex(planId);
           const progress = Number(plan.paidCount) / Number(plan.installmentCount);
           const complete = plan.paidCount >= plan.installmentCount;
 
           return (
-            <li key={idHex} className="rounded-lg border border-neutral-800 bg-neutral-900 p-4">
-              <div className="flex items-center justify-between">
-                <Link to={`/plans/${idHex}`} className="font-medium hover:underline">
+            <li
+              key={idHex}
+              className="rounded-2xl border border-[#1b1b24] bg-[#111119] p-5 transition-colors hover:border-[#26262f]"
+            >
+              <div className="flex items-center justify-between gap-4">
+                <Link
+                  to={`/plans/${idHex}`}
+                  className="font-serif-display truncate text-lg font-medium hover:text-[#7c8cff]"
+                >
                   {decodeDescription(plan.description) || `Plan ${idHex.slice(0, 8)}…`}
                 </Link>
-                <span className="text-sm text-neutral-400">
+                <span className="flex-shrink-0 rounded-full border border-[#26262f] bg-[#15151f] px-2.5 py-1 text-xs text-[#a8a6b3]">
                   {plan.paidCount.toString()} / {plan.installmentCount.toString()} paid
                 </span>
               </div>
 
-              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-neutral-800">
+              <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-[#1b1b24]">
                 <div
-                  className="h-full bg-white"
+                  className={`h-full rounded-full ${complete ? 'bg-[#7ee787]' : 'bg-[#7c8cff]'}`}
                   style={{ width: `${Math.min(100, progress * 100)}%` }}
                 />
               </div>
 
-              <div className="mt-3 flex items-center justify-between text-sm text-neutral-400">
-                <span>
-                  {starToNight(plan.installmentAmount)} NIGHT per installment ·{' '}
+              <div className="mt-4 flex items-center justify-between text-sm">
+                <span className="text-[#6f6d7a]">
+                  {starToNight(plan.installmentAmount)} NIGHT / installment ·{' '}
                   {starToNight(plan.totalAmount)} NIGHT total
                 </span>
                 <button
                   onClick={() => pay(planId)}
                   disabled={complete || payingId === idHex}
-                  className="rounded-full bg-white px-3 py-1 text-xs font-medium text-black disabled:opacity-40"
+                  className="rounded-full border border-[#f2f0ea] bg-[#f2f0ea] px-3.5 py-1.5 text-xs font-semibold text-[#0a0a0f] transition-opacity hover:opacity-85 disabled:border-[#26262f] disabled:bg-transparent disabled:text-[#6f6d7a] disabled:opacity-100"
                 >
                   {complete ? 'Complete' : payingId === idHex ? 'Paying…' : 'Pay next'}
                 </button>
